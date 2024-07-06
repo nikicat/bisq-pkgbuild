@@ -1,13 +1,13 @@
 pkgbase = bisq-latest
 	pkgdesc = Cross-platform desktop application that allows users to trade national currency (dollars, euros, etc) for bitcoin without relying on centralized exchanges
 	pkgver = 1.9.17
-	pkgrel = 1
+	pkgrel = 2
 	url = https://bisq.network
 	arch = any
 	license = AGPL3
-	makedepends = jdk11-openjdk
+	makedepends = zulu-15-bin
 	makedepends = git
-	depends = jdk11-openjdk
+	depends = jdk17-openjdk
 	provides = bisq
 	conflicts = bisq-bin
 	conflicts = bisq
