@@ -1,8 +1,10 @@
-# Maintainer: David Parrish <daveparrish@tutanota.com>
-# Co-Maintainer: Felix Golatofski <contact@xdfr.de>
+# Maintainer: Nick B <devel.niks@gmail.com>
+# Contributor: David Parrish <daveparrish@tutanota.com>
+# Contributor: Felix Golatofski <contact@xdfr.de>
 
-pkgname=bisq
-pkgver=1.9.14
+pkgname=bisq-latest
+_pkgname=bisq
+pkgver=1.9.17
 pkgrel=1
 pkgdesc="Cross-platform desktop application that allows users to trade national currency (dollars, euros, etc) for bitcoin without relying on centralized exchanges"
 arch=('any')
@@ -10,20 +12,21 @@ url="https://bisq.network"
 license=('AGPL3')
 depends=('jdk11-openjdk')
 makedepends=('jdk11-openjdk' 'git')
-source=("$pkgname-$pkgver.tar.gz::https://github.com/bisq-network/bisq/archive/v${pkgver}.tar.gz"
-	"https://github.com/bisq-network/bisq/releases/download/v${pkgver}/bisq-${pkgver}.tar.gz.asc"
-	"bisq.desktop")
-sha256sums=('e5c1a95a5a67798cbd38460d6fa7e0c753ff3c804091da0bd5917201df52fff8'
-            'SKIP'
-            '687d643fbe84660c3ebfe6270de98214f2e3ea791cb1d07d96d7ed889d61d406')
-validpgpkeys=('B493319106CC3D1F252E19CBF806F422E222AA02') # Alejandro García
+source=(
+	"git+https://github.com/bisq-network/bisq#branch=release/v$pkgver"
+	"bisq.desktop"
+)
+sha256sums=(
+        'SKIP'
+        '687d643fbe84660c3ebfe6270de98214f2e3ea791cb1d07d96d7ed889d61d406'
+)
 
 _binname=Bisq
-conflicts=("bisq-bin" "bisq-git")
+conflicts=("bisq-bin" "bisq")
 provides=("bisq")
 
 build() {
-  cd "${srcdir}/${pkgname}-${pkgver}" || exit
+  cd "${srcdir}/${_pkgname}" || exit
   msg2 "Building bisq..."
   sed -i '/vendor = JvmVendorSpec.AZUL/d' build-logic/commons/src/main/groovy/bisq.java-conventions.gradle
   sed -i '/implementation = JvmImplementation.VENDOR_SPECIFIC/d' build-logic/commons/src/main/groovy/bisq.java-conventions.gradle
@@ -33,12 +36,12 @@ build() {
 package() {
   # Install executable.
   install -d "${pkgdir}/opt/bisq"
-  cp -r "${srcdir}/${pkgname}-${pkgver}/desktop/build/app/"* "${pkgdir}/opt/bisq"
-  cp -r "${srcdir}/${pkgname}-${pkgver}/bisq-desktop" "${pkgdir}/opt/bisq/"
+  cp -r "${srcdir}/${_pkgname}/desktop/build/app/"* "${pkgdir}/opt/bisq"
+  cp -r "${srcdir}/${_pkgname}/bisq-desktop" "${pkgdir}/opt/bisq/"
   install -d "${pkgdir}/usr/bin"
   ln -s "/opt/bisq/bisq-desktop" "${pkgdir}/usr/bin/bisq-desktop"
 
   # Install desktop launcher.
   install -Dm644 bisq.desktop "${pkgdir}/usr/share/applications/bisq.desktop"
-  install -Dm644 "${srcdir}/${pkgname}-${pkgver}/desktop/package/linux/icon.png" "${pkgdir}/usr/share/pixmaps/bisq.png"
+  install -Dm644 "${srcdir}/${_pkgname}/desktop/package/linux/icon.png" "${pkgdir}/usr/share/pixmaps/bisq.png"
 }
