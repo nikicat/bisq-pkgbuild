@@ -5,15 +5,15 @@
 pkgname=bisq-latest
 _pkgname=bisq
 pkgver=1.9.17
-pkgrel=2
+pkgrel=3
 pkgdesc="Cross-platform desktop application that allows users to trade national currency (dollars, euros, etc) for bitcoin without relying on centralized exchanges"
 arch=('any')
 url="https://bisq.network"
-license=('AGPL3')
-depends=('jdk17-openjdk')
-makedepends=('zulu-15-bin' 'git')
+license=('AGPL-3.0-only')
+depends=('jdk11-openjdk' 'bash')
+makedepends=('git')
 source=(
-	"git+https://github.com/bisq-network/bisq#branch=release/v$pkgver"
+	"bisq::git+https://github.com/bisq-network/bisq#branch=release/v$pkgver"
 	"bisq.desktop"
 )
 sha256sums=(
@@ -27,7 +27,6 @@ provides=("bisq")
 
 build() {
   cd "${srcdir}/${_pkgname}" || exit
-  msg2 "Building bisq..."
   sed -i '/vendor = JvmVendorSpec.AZUL/d' build-logic/commons/src/main/groovy/bisq.java-conventions.gradle
   sed -i '/implementation = JvmImplementation.VENDOR_SPECIFIC/d' build-logic/commons/src/main/groovy/bisq.java-conventions.gradle
   ./gradlew clean :desktop:build -Dorg.gradle.java.home=/usr/lib/jvm/java-11-openjdk -x test
